@@ -8,8 +8,10 @@
 fn main() {
     let mut res = 42;
     let option = Some(12);
-    for x in option {
-        res += x;
+    if let Some(num) = option {
+        for x in 1..num {
+            res += x;
+        }
     }
     println!("{}", res);
 }
