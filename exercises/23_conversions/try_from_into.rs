@@ -27,7 +27,6 @@ enum IntoColorError {
     IntConversion,
 }
 
-// I AM NOT DONE
 
 // Your task is to complete this implementation and return an Ok result of inner
 // type Color. You need to create an implementation for a tuple of three
@@ -41,6 +40,12 @@ enum IntoColorError {
 impl TryFrom<(i16, i16, i16)> for Color {
     type Error = IntoColorError;
     fn try_from(tuple: (i16, i16, i16)) -> Result<Self, Self::Error> {
+        let (a, b, c) = tuple;
+
+        if !(0..255).contains(&a) || !(0..255).contains(&b) || !(0..255).contains(&c) {
+            return Err(IntoColorError::IntConversion);
+        }
+        return Ok(Color {red: u8::try_from(a).unwrap(), green: u8::try_from(b).unwrap(), blue: u8::try_from(c).unwrap()});
     }
 }
 
@@ -48,6 +53,19 @@ impl TryFrom<(i16, i16, i16)> for Color {
 impl TryFrom<[i16; 3]> for Color {
     type Error = IntoColorError;
     fn try_from(arr: [i16; 3]) -> Result<Self, Self::Error> {
+        let mut conversion = false;
+        arr.iter().for_each(|value|{
+            if !(0..255).contains(value){
+               conversion = true;
+            }
+        });
+
+        if conversion {
+            return Err(IntoColorError::IntConversion);
+        }
+
+        return Ok(Color {red: u8::try_from(arr[0]).unwrap(), green: u8::try_from(arr[1]).unwrap(), blue: u8::try_from(arr[2]).unwrap()});
+
     }
 }
 
@@ -55,6 +73,23 @@ impl TryFrom<[i16; 3]> for Color {
 impl TryFrom<&[i16]> for Color {
     type Error = IntoColorError;
     fn try_from(slice: &[i16]) -> Result<Self, Self::Error> {
+        if slice.len() < 3 || slice.len() > 3 {
+            return Err(IntoColorError::BadLen);
+        }
+
+        let mut conversion = false;
+        slice.iter().for_each(|value| {
+            if !(0..255).contains(value) {
+                conversion = true;
+            }
+        });
+
+        if conversion {
+            return Err(IntoColorError::IntConversion);
+        }
+
+        return Ok(Color {red: u8::try_from(slice[0]).unwrap(), green: u8::try_from(slice[1]).unwrap(), blue: u8::try_from(slice[2]).unwrap()} );
+
     }
 }
 
